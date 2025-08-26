@@ -1,9 +1,12 @@
 import os
 from pathlib import Path
 from urllib.parse import urlparse
+from typing import Optional
 
 from loguru import logger
 from pydantic import BaseModel, field_validator
+from tortoise import Tortoise
+from tortoise.exceptions import OperationalError, ConfigurationError
 
 
 class DatabaseConfig(BaseModel):
@@ -174,6 +177,114 @@ def parse_database_url(database_url: str) -> DatabaseConfig:
         port=port,
         database_name=database_name,
     )
+
+
+async def check_database_connection(
+    database_url: str, timeout: int = 10, max_retries: int = 3
+) -> tuple[bool, Optional[str]]:
+    """
+    Checks database connection using Tortoise ORM.
+
+    This function attempts to establish a connection to the database and execute
+    a simple query to verify the connection is working.
+
+    Args:
+        database_url (str): Database connection URL
+        timeout (int): Connection timeout in seconds (default: 10)
+        max_retries (int): Maximum number of connection attempts (default: 3)
+
+    Returns:
+        tuple[bool, Optional[str]]: Tuple (success, error_message)
+
+    Example:
+        success, error = await check_database_connection(
+            "mysql://user:pass@localhost:3306/database"
+        )
+        if success:
+            print("Database connection successful")
+        else:
+            print(f"Database connection failed: {error}")
+    """
+    logger.info("🔍 Checking database connection...")
+
+    for attempt in range(1, max_retries + 1):
+        try:
+            logger.info(f"🔄 Attempt {attempt}/{max_retries} to connect to database")
+
+            # Create temporary configuration for testing
+            db_config = {
+                "connections": {"default": database_url},
+                "apps": {
+                    "models": {
+                        "models": [],  # Empty list of models for connection testing
+                        "default_connection": "default",
+                    }
+                },
+            }
+
+            # Initialize Tortoise with timeout
+            await Tortoise.init(config=db_config)
+
+            # Check connection by executing a simple query
+            connection = Tortoise.get_connection("default")
+            await connection.execute_query("SELECT 1")
+
+            # Close connection
+            await Tortoise.close_connections()
+
+            logger.info("✅ Database connection successful")
+            return True, None
+
+        except OperationalError as e:
+            error_msg = f"Database operational error: {str(e)}"
+            logger.warning(f"❌ {error_msg} (attempt {attempt}/{max_retries})")
+
+            if attempt == max_retries:
+                logger.error(
+                    f"❌ Database connection failed after {max_retries} attempts"
+                )
+                return False, error_msg
+
+        except ConfigurationError as e:
+            error_msg = f"Database configuration error: {str(e)}"
+            logger.error(f"❌ {error_msg}")
+            return False, error_msg
+
+        except Exception as e:
+            error_msg = f"Unexpected database error: {str(e)}"
+            logger.error(f"❌ {error_msg} (attempt {attempt}/{max_retries})")
+
+            if attempt == max_retries:
+                logger.error(
+                    f"❌ Database connection failed after {max_retries} attempts"
+                )
+                return False, error_msg
+
+        # Pause between attempts (except the last one)
+        if attempt < max_retries:
+            import asyncio
+
+            await asyncio.sleep(1)
+
+    return False, "Maximum retry attempts exceeded"
+
+
+async def test_database_connection(database_url: str) -> None:
+    """
+    Tests database connection and outputs the result.
+
+    Args:
+        database_url (str): Database connection URL
+
+    Example:
+        await test_database_connection("mysql://user:pass@localhost:3306/database")
+    """
+    success, error = await check_database_connection(database_url)
+
+    if success:
+        logger.info("🎉 Database connection test passed!")
+    else:
+        logger.error(f"💥 Database connection test failed: {error}")
 
 
 def find_tortoise_models(

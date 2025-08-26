@@ -23,5 +23,5 @@ class ErrorHandlingMiddleware(BaseHTTPMiddleware):
             )
             return JSONResponse(
                 status_code=500,
-                content={"detail": f"{type(e).__name__}: {e!s}"},
+                content={"status": "error", "detail": f"{type(e).__name__}: {e!s}"},
             )
