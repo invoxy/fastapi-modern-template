@@ -1,0 +1,117 @@
+[project]
+name = "fastapi-modern-template"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "aerich>=0.9.1",
+    "aioboto3>=15.1.0",
+    "bcrypt>=4.3.0",
+    "colorama>=0.4.6",
+    "fastapi-utils>=0.8.0",
+    "loguru>=0.7.3",
+    "pydantic>=2.11.7",
+    "pydantic-settings>=2.10.1",
+    "tortoise>=0.1.1",
+]
+
+[dependency-groups]
+dev = [
+    "pyclean>=3.1.0",
+    "ruff>=0.12.10",
+]
+
+[tool.ruff]
+# Enable pycodestyle (`E`), Pyflakes (`F`), and isort (`I`) codes
+select = ["E", "F", "I", "W", "B", "C4", "UP", "N", "Q", "SIM", "ARG", "PIE", "TCH", "TID", "TCH", "RSE", "RET", "SLF", "SLOT", "PTH", "LOG", "PIE", "TRY", "NPY", "AIR", "PERF", "FURB", "C90", "DTZ", "ISC", "G", "INP", "S", "BLE", "FBT", "COM", "T20", "EM", "EXE", "FA", "ICN", "INT", "PGH", "PLR", "PLW", "PT", "Q", "RUF", "S", "TID", "TCH", "UP", "W", "YTT"]
+
+ignore = [
+    "A005",   # allow to shadow stdlib and builtin module names
+    "COM812", # trailing comma, conflicts with `ruff format`
+    # Different doc rules that we don't really care about:
+    "D100",
+    "D104",
+    "D106",
+    "D203",
+    "D212",
+    "RUF003",
+    "D105",    # Docstring для __methods__
+    "RUF001",  # Буквы похожие на латиницу и наоборот 
+    "RUF002",  # Буквы похожие на латиницу и наоборот 
+    "D417",
+    "D103",    # Docstring functions
+    "D102",    # Docstring 
+    "D101",    # Docstring 
+    "D401",
+    "D404",
+    "B904",
+    "RSE102",
+    "D107",
+    "B008",
+    "D102",
+    "D101",
+    "D405",
+    "EXE002",
+    "RUF012",
+    "ISC001",  # implicit string concat conflicts with `ruff format`
+    "ISC003",  # prefer explicit string concat over implicit concat
+    "PLR09",   # we have our own complexity rules
+    "PLR2004", # do not report magic numbers
+    "PLR6301", # do not require classmethod / staticmethod when self not used
+    "TRY003",  # long exception messages from `tryceratops`
+]
+
+
+# Allow autofix for all enabled rules (when `--fix`) is provided.
+fixable = ["ALL"]
+unfixable = []
+
+# Exclude a variety of commonly ignored directories.
+exclude = [
+    ".bzr",
+    ".direnv",
+    ".eggs",
+    ".git",
+    ".git-rewrite",
+    ".hg",
+    ".mypy_cache",
+    ".nox",
+    ".pants.d",
+    ".pytype",
+    ".ruff_cache",
+    ".svn",
+    ".tox",
+    ".venv",
+    "__pypackages__",
+    "_build",
+    "buck-out",
+    "build",
+    "dist",
+    "node_modules",
+    "venv",
+]
+
+# Same as Black.
+line-length = 88
+indent-width = 4
+
+# Assume Python 3.12
+target-version = "py312"
+
+[tool.ruff.format]
+# Like Black, use double quotes for strings.
+quote-style = "double"
+
+# Like Black, indent with spaces, rather than tabs.
+indent-style = "space"
+
+# Like Black, respect magic trailing commas.
+skip-magic-trailing-comma = false
+
+# Like Black, automatically detect the appropriate line ending.
+line-ending = "auto"
+
+[tool.ruff.isort]
+known-first-party = ["src"]
+
