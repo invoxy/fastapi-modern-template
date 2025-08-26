@@ -1,29 +1,28 @@
 # FastAPI Modern Template
 
-Минимальный шаблон современного FastAPI-приложения.
+Minimal template for a modern FastAPI application.
 
-## Стэк
+## Stack
 
 - FastAPI, Uvicorn
 - Tortoise ORM
-- Loguru (логирование)
-- JWT (аутентификация)
-- MinIO (файловое хранилище)
+- Loguru (logging)
+- JWT (authentication)
+- MinIO (object storage)
 - CORS
 
-## Реализовано
+## Implemented
 
-- Автообнаружение и регистрация роутеров из `src/apps/`
-- Автообнаружение и регистрация роутеров из `src/apps/`, файлы должны называться `routes.py`
-- Lifespan инициализация/закрытие ресурсов
-- База данных на Tortoise ORM (автогенерация схем)
-- JWT-аутентификация
-- Интеграция с MinIO
-- Middleware для ошибок и аутентификации
-- Health check эндпоинт `/health`
-- Структурированное логирование
+- Auto-discovery and registration of routers from `src/apps/` (files must be named `routes.py`)
+- Lifespan initialization/shutdown of resources
+- Database via Tortoise ORM (schema generation)
+- JWT authentication
+- MinIO integration
+- Middleware for errors and authentication
+- Health check endpoint `/health`
+- Structured logging
 
-## Установка и запуск
+## Install and run
 
 ```bash
 uv sync
@@ -31,7 +30,7 @@ cp env.example .env
 uv run python src/main.py
 ```
 
-## Документация API
+## API docs
 
 - Swagger UI: http://localhost:8000/docs
 - ReDoc: http://localhost:8000/redoc
