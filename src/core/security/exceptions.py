@@ -9,6 +9,6 @@ class JWTError(Exception):
         pass
 
 
-invalid_token = JWTError.InvalidTokenError("Неверный токен.")
-token_expired = JWTError.TokenExpiredError("Токен истёк.")
-payload_type = JWTError.PayloadTypeError("Неверный тип. Payload должен быть словарём.")
+invalid_token = JWTError.InvalidTokenError("Invalid token.")
+token_expired = JWTError.TokenExpiredError("Token has expired.")
+payload_type = JWTError.PayloadTypeError("Invalid type. Payload must be a dict.")

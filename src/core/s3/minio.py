@@ -57,11 +57,11 @@ class MinioClient:
 
     async def download_from_s3(self, s3_key: str, file_path: str) -> None:
         """
-        Скачивает файл из S3.
+        Download a file from S3.
 
-        :param bucket_name: Имя S3-бакета.
-        :param s3_key: Ключ объекта в S3 (путь внутри бакета).
-        :param file_path: Путь для сохранения локального файла.
+        :param bucket_name: Name of the S3 bucket.
+        :param s3_key: Object key in S3 (path inside the bucket).
+        :param file_path: Path to save the local file.
         """
         try:
             async with self.session.client(
@@ -79,11 +79,11 @@ class MinioClient:
 
     async def list_s3_files(self, prefix: str = "") -> None | list:  # noqa: RUF036
         """
-        Возвращает список файлов в указанном S3-бакете.
+        Return a list of files in the specified S3 bucket.
 
-        :param bucket_name: Имя S3-бакета.
-        :param prefix: Префикс (путь) для фильтрации файлов.
-        :return: Список файлов (ключей).
+        :param bucket_name: Name of the S3 bucket.
+        :param prefix: Prefix (path) to filter files.
+        :return: List of files (keys).
         """
         try:
             async with self.session.client(
@@ -103,10 +103,10 @@ class MinioClient:
 
     async def delete_from_s3(self, s3_key: str) -> None:
         """
-        Удаляет файл из S3.
+        Delete a file from S3.
 
-        :param s3_key: Ключ объекта в S3 (путь внутри бакета).
-        :raises MiniOError.FileDeleteError: Если произошла ошибка при удалении файла.
+        :param s3_key: Object key in S3 (path inside the bucket).
+        :raises MiniOError.FileDeleteError: If an error occurs while deleting a file.
         """
         try:
             async with self.session.client(
@@ -120,7 +120,7 @@ class MinioClient:
                 await s3_client.delete_object(Bucket=self.bucket_name, Key=s3_key)
 
         except ClientError as e:
-            # Логируем ошибку и вызываем кастомное исключение
+            # Log the error and raise a custom exception
             logger.error(f"Failed to delete file from S3: {e}")
             raise MiniOError.FileDeleteError(s3_key=s3_key, error=str(e))
 
@@ -128,14 +128,14 @@ class MinioClient:
         self, file, s3_key: str, chunk_size: int = 5 * 1024 * 1024
     ) -> None:
         """
-        Загружает файл в S3 с использованием мультипаузной загрузки.
+        Upload a file to S3 using multipart upload.
 
-        :param file: Файл для загрузки (например, UploadFile из FastAPI).
-        :param s3_key: Ключ объекта в S3 (путь внутри бакета).
-        :param chunk_size: Размер части файла (по умолчанию 5 MB).
+        :param file: File to upload (e.g., FastAPI UploadFile).
+        :param s3_key: Object key in S3 (path inside the bucket).
+        :param chunk_size: Part size (default 5 MB).
         """
         try:
-            # Инициализация мультипаузной загрузки
+            # Initialize multipart upload
             async with self.session.client(
                 "s3",
                 region_name=self.region_name,
@@ -152,7 +152,7 @@ class MinioClient:
                 parts = []
                 part_number = 1
 
-                # Чтение файла по частям
+                # Read file in chunks
                 async for chunk in self._read_file_in_chunks(file, chunk_size):
                     part = await s3_client.upload_part(
                         Bucket=self.bucket_name,
@@ -164,7 +164,7 @@ class MinioClient:
                     parts.append({"PartNumber": part_number, "ETag": part["ETag"]})
                     part_number += 1
 
-                # Завершение мультипаузной загрузки
+                # Complete multipart upload
                 await s3_client.complete_multipart_upload(
                     Bucket=self.bucket_name,
                     Key=s3_key,
@@ -173,7 +173,7 @@ class MinioClient:
                 )
 
         except ClientError as e:
-            # Отмена загрузки в случае ошибки
+            # Abort multipart upload in case of error
             if "upload_id" in locals():
                 await s3_client.abort_multipart_upload(
                     Bucket=self.bucket_name, Key=s3_key, UploadId=upload_id
@@ -185,11 +185,11 @@ class MinioClient:
         file, chunk_size: int
     ) -> AsyncGenerator[bytes, None]:
         """
-        Асинхронно читает файл по частям.
+        Read file asynchronously in chunks.
 
-        :param file: Файл для чтения.
-        :param chunk_size: Размер части файла.
-        :yield: Часть файла в виде байтов.
+        :param file: File to read.
+        :param chunk_size: Chunk size.
+        :yield: Chunk bytes.
         """
         if hasattr(file, "read"):
             if asyncio.iscoroutinefunction(file.read):

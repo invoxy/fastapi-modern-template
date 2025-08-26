@@ -18,7 +18,7 @@ def fastapi_routers(root_dir: str | Path, target_filename: str = "routes.py") ->
     root_path = Path(root_dir).resolve()
     routers_data = []
 
-    # Добавляем корневую директорию в sys.path для корректных импортов
+    # Add project root to sys.path for correct imports
     root_parent = root_path.parent
     if str(root_parent) not in sys.path:
         sys.path.insert(0, str(root_parent))
@@ -26,18 +26,18 @@ def fastapi_routers(root_dir: str | Path, target_filename: str = "routes.py") ->
     for file_path in root_path.rglob(target_filename):
         if file_path.is_file():
             try:
-                # Создаем правильное имя модуля
+                # Build proper module name
                 relative_path = file_path.relative_to(root_path)
                 module_name = (
                     f"apps.{str(relative_path.with_suffix('')).replace(os.sep, '.')}"
                 )
 
-                # Получаем название директории приложения для тега
+                # Get app directory name for the tag
                 app_directory = (
                     relative_path.parts[0] if relative_path.parts else "unknown"
                 )
-                # Создаем иерархический тег для группировки
-                # Используем ":" как разделитель для иерархии
+                # Create a hierarchical tag for grouping
+                # Use ":" as a hierarchy separator
                 category_mapping = {
                     "authentication": "Auth:Authentication",
                     "acl": "Auth:Access Control",
@@ -52,13 +52,13 @@ def fastapi_routers(root_dir: str | Path, target_filename: str = "routes.py") ->
                     app_directory, f"Apps:{app_directory.replace('_', ' ').title()}"
                 )
 
-                # Импортируем модуль стандартным способом
+                # Import the module using standard importlib
                 module = importlib.import_module(module_name)
 
-                # Ищем APIRouter в модуле
+                # Look for APIRouter instances in the module
                 for attr_name, attr_value in inspect.getmembers(module):
                     if isinstance(attr_value, APIRouter):
-                        # Возвращаем роутер с информацией о теге
+                        # Collect router with tag information
                         routers_data.append(
                             {
                                 "router": attr_value,

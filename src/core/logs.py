@@ -4,49 +4,49 @@ from colorama import Fore, Style
 from loguru import logger
 
 
-# Кастомный формат логов
+# Custom log format
 def custom_log_format(record):
-    # Цвет для уровня лога
+    # Color for log level
     level_color = {
         "DEBUG": "<blue>{level}</blue>:    ",
         "INFO": "<green>{level}</green>:     ",
         "WARNING": "<yellow>{level}</yellow>:  ",
         "ERROR": "<red>{level}</red>:    ",
         "CRITICAL": "<RED><bold>{level}</bold></RED>: ",
-    }.get(record["level"].name, "<white>{level}</white>")  # По умолчанию белый
+    }.get(record["level"].name, "<white>{level}</white>")  # Default white
 
     return (
-        f"{level_color}"  # Уровень лога с цветом
+        f"{level_color}"  # Level with color
         "{message} "
         "<cyan>({time:YYYY-MM-DD HH:mm:ss})</cyan> "
         "<magenta>[{module}.{function}:{line}]</magenta>\n"
     )
 
 
-# Настройка логгера
+# Logger setup
 def setup_logger(log_level="INFO"):
-    """Настройка логгера с возможностью изменения уровня"""
-    logger.remove()  # Удаляем стандартный обработчик
+    """Configure logger with adjustable level"""
+    logger.remove()  # Remove default handler
     logger.add(
         sys.stdout,
         format=custom_log_format,
-        colorize=True,  # Включаем цвета
-        level=log_level,  # Устанавливаем минимальный уровень логов
+        colorize=True,  # Enable colors
+        level=log_level,  # Set minimum log level
     )
     return logger
 
 
 def print_section(title, char="=", length=50, color=Fore.WHITE):
     """
-    Печатает разделитель с заголовком по центру в указанном цвете.
+    Print a divider with a centered title in the specified color.
 
-    :param title: Текст заголовка
-    :param char: Символ для разделителя
-    :param length: Общая длина строки
-    :param color: Цвет из Fore (например, Fore.RED)
+    :param title: Title text
+    :param char: Divider character
+    :param length: Total line length
+    :param color: Color from Fore (e.g., Fore.RED)
     """
     if len(title) + 4 > length:
-        title = title[: length - 7] + "..."  # Обрезаем, если длинный
+        title = title[: length - 7] + "..."  # Trim if too long
 
     line = char * length
     centered_title = title.center(length)
@@ -58,15 +58,15 @@ def print_section(title, char="=", length=50, color=Fore.WHITE):
 
 def print_init_status(success, message, error_details=None):
     """
-    Выводит статус инициализации с эмодзи и цветом.
+    Print initialization status with emoji and color.
 
-    :param success: bool - успешна ли инициализация
-    :param message: str - основное сообщение
-    :param error_details: str (необязательно) - детали ошибки (выводятся, если success=False)
+    :param success: bool - whether initialization succeeded
+    :param message: str - main message
+    :param error_details: str (optional) - error details (shown if success=False)
     """
     if success:
         print(f"✅ {message}")
     else:
         print(f"{Fore.RED}❌ {message}{Style.RESET_ALL}")
         if error_details:
-            print(f"{Fore.RED}  Ошибка: {error_details}{Style.RESET_ALL}")
+            print(f"{Fore.RED}  Error: {error_details}{Style.RESET_ALL}")
