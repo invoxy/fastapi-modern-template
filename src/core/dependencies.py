@@ -1,3 +1,4 @@
+from apps.users.dependencies import get_current_user
 from settings import environment
 
 from .s3 import make_minio_client
@@ -12,3 +13,6 @@ def get_minio_client() -> MinioClient:
 
 def get_jwt_manager() -> JWTManager:
     return make_jwt_manager(environment)
+
+
+__all__ = ["get_current_user", "get_jwt_manager", "get_minio_client"]

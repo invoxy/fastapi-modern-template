@@ -13,6 +13,7 @@ dependencies = [
     "loguru>=0.7.3",
     "pydantic>=2.11.7",
     "pydantic-settings>=2.10.1",
+    "python-jose>=3.5.0",
     "tortoise>=0.1.1",
 ]
 
@@ -49,6 +50,7 @@ ignore = [
     "RSE102",
     "D107",
     "B008",
+    "INP001",
     "D102",
     "D101",
     "D405",
@@ -75,11 +77,6 @@ exclude = [
     ".git",
     ".git-rewrite",
     ".hg",
-    ".mypy_cache",
-    ".nox",
-    ".pants.d",
-    ".pytype",
-    ".ruff_cache",
     ".svn",
     ".tox",
     ".venv",

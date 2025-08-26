@@ -37,6 +37,7 @@ class Environment(BaseSettings):
     secret_key: str
     jwt_algorithm: str
     jwt_expire_minutes: int
+    security_algorithm: str = Field(default="HS256")
 
 
 environment = Environment()

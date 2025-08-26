@@ -1,4 +1,4 @@
-class JWTException(Exception):
+class JWTError(Exception):
     class PayloadTypeError(Exception):
         pass
 
@@ -9,8 +9,6 @@ class JWTException(Exception):
         pass
 
 
-invalid_token = JWTException.InvalidTokenError("Неверный токен.")
-token_expired = JWTException.TokenExpiredError("Токен истёк.")
-payload_type = JWTException.PayloadTypeError(
-    "Неверный тип. Payload должен быть словарём."
-)
+invalid_token = JWTError.InvalidTokenError("Неверный токен.")
+token_expired = JWTError.TokenExpiredError("Токен истёк.")
+payload_type = JWTError.PayloadTypeError("Неверный тип. Payload должен быть словарём.")

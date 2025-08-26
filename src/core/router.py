@@ -9,7 +9,6 @@ from pathlib import Path
 from loguru import logger
 
 
-
 def fastapi_routers(root_dir: str | Path, target_filename: str = "routes.py") -> list:
     """Discover FastAPI routers with automatic tag assignment"""
     from fastapi import APIRouter
