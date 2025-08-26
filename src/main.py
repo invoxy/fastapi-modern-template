@@ -4,6 +4,7 @@ from fastapi import FastAPI
 from loguru import logger
 from tortoise import Tortoise
 
+from apps.users.admin import init_admin
 from core.database import init_db
 from core.database.utils import check_database_connection
 from core.logs import setup_logger
@@ -43,6 +44,8 @@ async def lifespan(app: FastAPI):
     # Register routers
     register_routers(app)
     await setup_database()
+
+    await init_admin()
 
     await setup_custom_swagger_ui(app)
 

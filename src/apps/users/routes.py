@@ -5,7 +5,7 @@ from jose import jwt
 from loguru import logger
 from pydantic import BaseModel
 from pydantic.type_adapter import R
-
+from core.security.password import Password
 from settings import environment
 from tortoise.exceptions import DoesNotExist
 from .models import User
@@ -48,7 +48,7 @@ async def authenticate_user(
 ) -> User | None:
     try:
         user = await User.get(username=username)
-        if username == user.username and password == user.password:
+        if Password.is_valid(password, user.password, environment.secret_key):
             return user
     except DoesNotExist:
         return None
@@ -64,4 +64,4 @@ async def login_for_access_token(form_data: Login = Body()):
             headers={"WWW-Authenticate": "Bearer"},
         )
     access_token = create_access_token(data={"sub": user.username})
-    return {"access_token": access_token}
+    return {"access_token": access_token, "token_type": "bearer"}

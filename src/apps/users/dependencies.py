@@ -36,7 +36,7 @@ async def get_current_user(token=Depends(HTTPBearer())) -> User:
             raise get_credentials_exception()
     except JWTError:
         raise get_credentials_exception()
-    user = User.get(username=username)
+    user = await User.get_or_none(username=username)
     if user is None:
         raise get_credentials_exception()
     return user
