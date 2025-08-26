@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Test Swagger Filter</title>
+    <style>
+        /* Стили для фильтра HTTP методов в стиле Swagger */
+        .http-method-filter {
+            display: inline-flex;
+            align-items: center;
+            margin-left: 15px;
+            padding: 0;
+            background: none;
+            border: none;
+            position: relative;
+        }
+        
+        .http-method-filter .filter-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+        
+        .http-method-filter select {
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            min-width: 140px;
+            padding: 6px 32px 6px 12px;
+            border: 1px solid #e3e3e3;
+            border-radius: 4px;
+            background: white url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24'%3E%3Cpath fill='%23666' d='M7 10l5 5 5-5z'/%3E%3C/svg%3E") no-repeat right 8px center;
+            background-size: 16px;
+            font-size: 13px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+            color: #333;
+            cursor: pointer;
+            height: 32px;
+            line-height: 1;
+            transition: all 0.2s ease;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+        
+        .http-method-filter select:hover {
+            border-color: #b3b3b3;
+            background-color: #f8f9fa;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .http-method-filter select:focus {
+            outline: none;
+            border-color: #4990e2;
+            background-color: white;
+            box-shadow: 0 0 0 3px rgba(73, 144, 226, 0.1);
+        }
+        
+        /* Стили для интеграции с существующим фильтром Swagger */
+        .swagger-ui .filter {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .swagger-ui .filter .http-method-filter {
+            margin-left: 0;
+        }
+        
+        /* Имитация фильтра Swagger */
+        .filter {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 20px;
+            background: #fafafa;
+            border: 1px solid #e3e3e3;
+            border-radius: 4px;
+            margin: 20px;
+        }
+        
+        .filter input {
+            padding: 6px 12px;
+            border: 1px solid #e3e3e3;
+            border-radius: 4px;
+            font-size: 13px;
+            min-width: 200px;
+        }
+    </style>
+</head>
+<body>
+    <div class="filter">
+        <input type="text" placeholder="Filter by tag" />
+        <div class="http-method-filter">
+            <div class="filter-wrapper">
+                <select id="http-method-select" title="Filter by HTTP method">
+                    <option value="">All methods</option>
+                    <option value="GET">GET</option>
+                    <option value="POST">POST</option>
+                    <option value="PUT">PUT</option>
+                    <option value="PATCH">PATCH</option>
+                    <option value="DELETE">DELETE</option>
+                    <option value="HEAD">HEAD</option>
+                    <option value="OPTIONS">OPTIONS</option>
+                </select>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        document.getElementById('http-method-select').addEventListener('change', function() {
+            console.log('Selected method:', this.value);
+        });
+    </script>
+</body>
+</html>

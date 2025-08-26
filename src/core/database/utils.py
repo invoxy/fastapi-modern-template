@@ -182,7 +182,7 @@ def find_tortoise_models(
     """Discover Tortoise ORM models"""
     models = []
 
-    logger.debug(f"🔍 Searching for models in directory: {root_dir}")
+    logger.info(f"🔍 Searching for models in directory: {root_dir}")
 
     for file_path in root_dir.rglob(target_filename):
         if file_path.is_file():
@@ -192,5 +192,5 @@ def find_tortoise_models(
             )
             models.append(module_path)
 
-    logger.debug(f"🎯 Found models: {len(models)}")
+    logger.info(f"🎯 Found models: {len(models)}")
     return models
