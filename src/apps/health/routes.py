@@ -4,7 +4,6 @@ from pathlib import Path
 
 from fastapi import APIRouter
 
-from core import database
 from core.database.utils import check_database_connection
 from core.s3.utils import check_s3_connection
 from settings import environment

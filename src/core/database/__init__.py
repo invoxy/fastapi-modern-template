@@ -42,7 +42,7 @@ async def init_db(config: dict, *, generate_schemas: bool = True):
         config=config,
     )
     if generate_schemas:
-        await Tortoise.generate_schemas()
+        await Tortoise.generate_schemas(safe=True)
 
 
 async def init_dbs(*db_configs: tuple):

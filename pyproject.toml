@@ -117,3 +117,7 @@ line-ending = "auto"
 [tool.ruff.isort]
 known-first-party = ["src"]
 
+[tool.aerich]
+tortoise_orm = "database_config.TORTOISE_ORM"
+location = "./src/migrations"
+src_folder = "./src"

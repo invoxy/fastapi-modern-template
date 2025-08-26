@@ -1,11 +1,13 @@
 from datetime import UTC, datetime, timedelta
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Body
 from jose import jwt
+from loguru import logger
 from pydantic import BaseModel
+from pydantic.type_adapter import R
 
 from settings import environment
-
+from tortoise.exceptions import DoesNotExist
 from .models import User
 
 router = APIRouter(tags=["Users"])
@@ -40,18 +42,21 @@ def create_access_token(
     )
 
 
-def authenticate_user(
+async def authenticate_user(
     username: str,
     password: str,
-):
-    if username == User.username and User.password == password:
-        return User
-    return None
+) -> User | None:
+    try:
+        user = await User.get(username=username)
+        if username == user.username and password == user.password:
+            return user
+    except DoesNotExist:
+        return None
 
 
 @router.post("/token", response_model=Token, summary="Get access token")
-async def login_for_access_token(form_data: Login = Depends()):
-    user = authenticate_user(form_data.username, form_data.password)
+async def login_for_access_token(form_data: Login = Body()):
+    user = await authenticate_user(form_data.username, form_data.password)
     if not user:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -59,4 +64,4 @@ async def login_for_access_token(form_data: Login = Depends()):
             headers={"WWW-Authenticate": "Bearer"},
         )
     access_token = create_access_token(data={"sub": user.username})
-    return {"access_token": access_token, "token_type": "bearer"}
+    return {"access_token": access_token}

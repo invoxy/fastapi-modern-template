@@ -7,7 +7,6 @@ import sys
 from pathlib import Path
 
 from fastapi import FastAPI
-from loguru import logger
 
 from settings import APPS_PATH
 
@@ -23,8 +22,6 @@ def fastapi_routers(root_dir: str | Path, target_filename: str = "routes.py") ->
     root_parent = root_path.parent
     if str(root_parent) not in sys.path:
         sys.path.insert(0, str(root_parent))
-
-    logger.info(f"🔍 Searching for routers in directory: {root_path}")
 
     for file_path in root_path.rglob(target_filename):
         if file_path.is_file():
@@ -55,16 +52,12 @@ def fastapi_routers(root_dir: str | Path, target_filename: str = "routes.py") ->
                     app_directory, f"Apps:{app_directory.replace('_', ' ').title()}"
                 )
 
-                logger.info(f"🔍 Trying to import module: {module_name}")
-
                 # Импортируем модуль стандартным способом
                 module = importlib.import_module(module_name)
 
                 # Ищем APIRouter в модуле
                 for attr_name, attr_value in inspect.getmembers(module):
                     if isinstance(attr_value, APIRouter):
-                        logger.info(f"✅ Found router: {attr_name} in {module_name}")
-
                         # Возвращаем роутер с информацией о теге
                         routers_data.append(
                             {
@@ -76,18 +69,14 @@ def fastapi_routers(root_dir: str | Path, target_filename: str = "routes.py") ->
                         )
 
             except Exception as e:  # noqa: BLE001
-                logger.error(f"❌ Error processing file {file_path}: {e}")
-                logger.error(f"❌ Module name was: {module_name}")
-                # Continue processing other files
                 continue
 
-    logger.info(f"🎯 Found routers: {len(routers_data)}")
     return routers_data
 
 
 def register_routers(app: FastAPI) -> None:
     """Auto-discover and register all routers"""
-    logger.info("🔍 Discovering routers...")
+
     routers_data = fastapi_routers(APPS_PATH)
 
     for router_info in routers_data:
@@ -98,6 +87,3 @@ def register_routers(app: FastAPI) -> None:
 
         # Add router to app
         app.include_router(router)
-        logger.info(f"✅ Registered router: {name} from {module} with tag: {tag}")
-
-    logger.info(f"🎯 Total routers registered: {len(routers_data)}")

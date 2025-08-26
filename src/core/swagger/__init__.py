@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
+from loguru import logger
 
 from settings import CORE_PATH
 
@@ -33,3 +34,5 @@ async def setup_custom_swagger_ui(app: FastAPI):
         html_content = html_content.replace("{{openapi_url}}", "/openapi.json")
 
         return HTMLResponse(content=html_content, media_type="text/html")
+
+    logger.info("✅ Swagger UI has been installed successfully.")
